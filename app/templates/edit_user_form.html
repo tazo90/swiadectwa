@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        
+        <form action="" method="POST">{% csrf_token %}
+            {% for field in user_form %}
+            {{ field.label }} {{ field }}
+            {% endfor %}
+            
+            {% if uczen_form %}
+                {% for field in uczen_form %}
+                {{ field.label }} {{ field }}
+                {% endfor %}
+            
+                {% for field in szkola_klasa_form %}
+                {{ field.label }} {{ field }}
+                {% endfor %}
+            {% endif %}                        
+            <input type="submit" value="Zapisz" />
+        </form>
+    </div>
+{% endblock %}

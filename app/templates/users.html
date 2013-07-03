@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        
+        <a class="btn btn-small" href="{% url user-create %}">Dodaj użytkownika</a>
+
+        <table cellpadding="0" cellspacing="0" border="0" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Pesel</th>
+            <th>Imie</th>
+            <th>Nazwisko</th>            
+            <th>Rola</th>
+            <th>Edytuj</th>
+            <th>Usun</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}            
+        <tr class="odd gradeX">
+            <td {% if user.is_superuser %}style="font-weight:bold;color:red;"{% endif %}>{{ user.username }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>                
+            <td {% if user.is_superuser %}style="color:red;"{% endif %} class="center">                
+                {% if user.profil.rola == 'u' %} uczen 
+                {% elif user.profil.rola == 'n' %} nauczyciel
+                {% else %} admin
+                {% endif %}
+            </td>
+            <td class="center"><a class="btn btn-small" href="{% url user-edit user.username %}">Edytuj</a></td>
+            {% if not user.is_superuser %}<td class="center"><a class="btn btn-small" href="{% url user-delete pk=user.id %}">Usun</a></td>{% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        <span class="page-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-small" href="{% url user-list %}?page={{ page_obj.previous_page_number }}">Wstecz</a>
+            {% endif %}
+            <span class="page-current">
+                Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+                <a class="btn btn-small" href="{% url user-list %}?page={{ page_obj.next_page_number }}">Dalej</a>
+            {% endif %}
+    </div>
+    {% endif %}
+
+    </div>
+{% endblock %}

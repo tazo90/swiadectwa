@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper" id="wrapper">
+        {% if request.user.is_superuser %}
+        <a class="btn btn-small" href="{% url create-certificate %}">Dodaj nowe świadectwo</a>        
+        {% endif %}
+
+        <div class="certificate-list" style="border:1px solid red;">                        
+            {% for field in swiad_sel %}
+            {{field.label }} <br />
+            {{ field }}
+            {% endfor %}  
+
+            <a id="show-cert" class="btn btn-small" href="#">Pokaż</a>          
+            {% if request.user.is_superuser %}            
+            <a id="delete-cert" class="btn btn-small" href="#">Usun</a>
+            {% elif request.user.profil.rola == 'n' %}
+            <a id="fill-cert" class="btn btn-small" href="#">Wypełnij</a>                    
+            {% endif %}
+        </div>
+                
+        <div class="cert" id="cert-content" style="border:1px solid red;">
+        </div>
+        
+    </div>
+{% endblock %}

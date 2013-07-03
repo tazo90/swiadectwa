@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+    {% if request.user.profil.rola == 'u' %}
+    <p>Lista twoich świadectw</p>    
+    {% elif request.user.profil.rola == 'n' %}
+    <p>Nauczycielu, wybierz odpowiednie opcje, by wypełnić świadectwo</p>
+    
+    {% else %}
+    <p>Witaj, adminie!</p>
+    <div class="admin-tip">
+        <p>Twój schemat postępowania <span style="color:red;"> - trzymaj się tych regół !</span></p>
+        <ul>
+            <li>1. Utwórz szkołę.</li>
+            <li>2. Utwórz klasy w szkole.</li>
+            <li>3. Utwórz konto użytkownika <b>(nauczyciel/uczen)</b> - w zależności przypisz do klasy w szkole.</li>
+            <li>4. Utwórz świadectwa.</li>
+            <li>5. Dodaj odpowiednie pola w świadectwach.</li>
+            <li><span style="color:green;">Twój system powienien teraz działać sprawnie.</span></li>
+        </ul>
+    </div>
+    {% endif %}    
+
+    </div>
+{% endblock %}

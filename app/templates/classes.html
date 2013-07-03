@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        <p>Szkoła: {{ szkola.nazwa }} {{ szkola.nr }} w {{ szkola.miejscowosc }} </p>
+
+        {% if request.user.is_superuser %}
+        <a class="btn btn-small btn-me" href="{% url class-create szkola.id %}">Dodaj klasę</a>
+        {% endif %}
+
+        <br />
+
+        <div class="class-list">
+            <p>Klasy</p>
+
+            {% for klasa in klasy %}
+            <table class="table">                    
+                <tbody>
+                    <tr>
+                        <td id="nazwa-klasy" style="width:100px">{{ klasa.klasa }}</td>
+                        <td style="text-align:right"><a id="uczniowie" class="btn btn-small" href="#">Uczniowie</a></td>
+                        {% if request.user.is_superuser %}
+                        <td><a id="delete-class" class="btn btn-small" href="{% url class-delete szkola.id klasa.klasa %}">Usun</a></td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
+
+        <div class="student-list">
+            <p>Uczniowie w klasie</p>
+            <table class="table">
+                <theader>
+                    <th style="width:100px">Pesel</th>
+                    <th style="width:100px">Imie</th>
+                    <th>Nazwisko</th>
+                </theader>
+                <tbody id="student-row">                    
+                </tbody>
+            </table>
+        </div>
+ 
+    </div>
+{% endblock %}

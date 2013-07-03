@@ -1,0 +1,190 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap.css">     
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}base.less">           
+        <title>Main page</title>        
+    </head>
+<body>    
+    <header>
+        <div class="wrapper">                        
+            {% block login %}
+            <div class="navbar-wrapper">
+                <div class="container-fluid">
+                    <div class="navbar navbar-inverse">
+                        <div class="navbar-inner">
+                            {#<a class="brand" href="#">Panel główny</a>#}                            
+                            <ul class="nav">
+                                <li><a href="{% url index %}">Home</a></li>
+                                <li class="divider-vertical"></li>
+                                {% if user.is_superuser %}                                                                
+                                <li><a href="{% url user-list %}">Użytkownicy</a></li>
+                                <li class="divider-vertical"></li>
+                                <li><a href="#">Uczniowie</a></li>
+                                <li class="divider-vertical"></li>
+                                <li><a href="{% url certificate %}">Świadectwa</a></li>
+                                <li class="divider-vertical"></li>
+                                <li><a href="{% url school-list %}">Szkoły</a></li>
+                                {% elif user.profil.rola == 'u' %}
+                                {% elif user.profil.rola == 'n' %}
+                                <li><a href="{% url certificate %}">Świadectwa</a></li>
+                                <li class="divider-vertical"></li>
+                                <li><a href="{% url school-list %}">Szkoły</a></li>
+                                {% endif %}
+                            </ul>
+                            
+                            <ul class="nav pull-right">   
+                                <li class="divider-vertical"></li>                                                 
+                                <li><a href="{% url logout %}">Wyloguj</a> 
+                            </ul>
+
+                            </div>
+                        </div>
+                    </div>   
+                </div>             
+            </div>                           
+            {% endblock %}
+        </div>
+    </header>  
+
+    {% block user-info %}
+    <div class="user-info-bar">
+        <div class="wrapper">
+            <span class="user-info">Zalogowano jako: <span class="user">{{ user.username }}</span>
+                <span class="role">{% if user.is_superuser %} (admin)
+                {% elif user.profil.rola == 'n' %} (nauczyciel)
+                {% elif user.profil.rola == 'u' %} (uczen)
+                {% endif %}
+                </span>
+            </span>
+        </div>
+    </div>
+    {% endblock %}
+
+    <div class="content">                            
+        {% block content %}        
+        {% endblock %}            
+    </div>
+
+    <footer>
+        <div class="wrapper">
+            <small>Copyright &copy; 2013 <a href="#" title="System formularzy">System Formularzy </a> by <span class="author">Lila, Tazo</span></small>
+        </div>
+    </footer>
+
+    <!-- javascript
+    ===================================================== -->    
+    <script src="{{ STATIC_URL }}less.js"></script>    
+    <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script> 
+
+    <script type="text/javascript">        
+        $(document).ready(function() {
+            // przy zmianie selectu (wybrania innej szkoly), select od id id_szkola jest wypelniany klasami tej szkoly
+            $('#id_szkola').change(function() {
+                var szkola_id = $("#id_szkola :selected").val();                
+                $.ajax({
+                    type: "POST",
+                    url: '/school/class/',      // url mapowany na widok ajax_school_class
+                    data: {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        szkola_id: szkola_id,
+                    },
+                    //dataType: 'json',
+                    success: function(data) {
+                        $("#id_klasa").find('option').remove().end();       // wyczysc opcje przed dodaniem
+
+                        $.each(data, function(key, val) {                                                     
+                            $("#id_klasa").append($('<option></option>').val(key).html(val));
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
+                    }
+                });
+            });
+            
+            // przy klikniecu na przycisk uczeniowie pokazuje sie lista uczniow danej klasy ze szkoly
+            $('a#uczniowie').click(function() {                
+                var szkola_id = window.location.pathname.split('/')[2];
+                var _klasa = $(this).parent().prev('td').text();
+
+                $.ajax({
+                    type: "POST",
+                    url: '/school/class/show/',                    
+                    dataType: 'json',
+                    data: {
+                        // JAK NIE FORMULARZ TO NIE DAWAC: csrfmiddlewaretoken, bo nie dziala                                                
+                        szkola_id: szkola_id,
+                        klasa: _klasa,                        
+                    },
+                    success: function(data) {                        
+                        $("#student-row").find('tr').remove().end();
+
+                        $.each(data, function(i, item) {                          
+                            $('#student-row').append(
+                                '<tr><td>'+data[i].fields.username+'</td><td>'
+                                          +data[i].fields.first_name+'</td><td>'
+                                          +data[i].fields.last_name+'</td></tr>')                            
+                        });
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
+                    }
+                });           
+            });
+        
+            // przy kliknieciu pokazuje sie swiadectwo
+            $('a#show-cert').click(function() {
+                var sel = $('#id_swiadectwa').find(':selected').text();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url show-cert %}',
+                    dataType: 'json',
+                    data: {
+                        swiadectwo_show: sel,
+                    },
+                    success: function(data) { 
+                        $('#wrapper').css({'height': '1240px'});                        
+                        $("#cert-content").html(
+                            '<p>' + data[0].fields.nazwa + '</p>'
+                            +'<img src="{{ MEDIA_URL }}/' + data[0].fields.obrazek + '" />'
+                        );
+                    },
+                    /*error: function(xhr, textStatus, errorThrown) {
+                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
+                    }*/
+                });
+            });
+
+            // przy klikniecu usuwa swiadectwo i odswieza liste swiadectw
+            $('a#delete-cert').click(function() {
+                var sel = $('#id_swiadectwa').find(':selected').text();
+
+                 $.ajax({
+                    type: 'POST',
+                    url: '{% url show-cert %}',
+                    dataType: 'json',
+                    data: {
+                        swiadectwo_del: sel,
+                    },
+                    success: function(data) { 
+                        $("#id_swiadectwa").find('option').remove().end();          // usuwa liste swiadectw
+
+                        $.each(data, function(i, item) {                            // aktualizauje nowa liste swiadectw
+                            $("#id_swiadectwa").append($('<option></option>').val(data[i].fields.nazwa).html(data[i].fields.nazwa));
+                        });
+                    },
+                    /*error: function(xhr, textStatus, errorThrown) {
+                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
+                    }*/
+                });
+            });
+            
+        });
+
+    </script>
+
+</body>
+</html>

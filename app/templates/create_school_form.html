@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        <p>Dodawanie nowej szkoły</p>
+        
+        <form action="" method="post">{% csrf_token %}
+            {% for field in szkola_form %}
+            {{ field.label }} {{ field }}
+            <br />
+            {% endfor %}
+            <input type="submit" value="Zapisz" />
+        </form>        
+    </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper delete-user">
+        <h3>Usuwanie szkoły</h3>
+
+        <p>Jesteś pewien, że chcesz usunąc szkołę: {{ object }} ?</p>
+
+        <form action="{% url school-delete pk=object.id %}" method='post'>{% csrf_token %}            
+            <input class="btn" type="submit" value="Tak" />            
+            <a class="btn" href="{% url school-list %}">Nie</a>
+        </form>
+    </div>
+{% endblock %}

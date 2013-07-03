@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        <p>Tworzenie nowego świadectwa</p>
+
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {% for field in swiad_form %}
+            {{ field.label }} {{ field }}
+            {% endfor %}
+            <br /><br />
+            <input type="submit" value="Zapisz" />
+        </form>
+    </div>
+{% endblock %}

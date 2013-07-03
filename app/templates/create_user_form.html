@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">   
+        <p>Tworzenie nowego użytkownika</p>            
+        
+        <form action="" method="post">{% csrf_token %}
+            {% for field in user_form %}
+            {{ field }}
+            <br />
+            {% endfor %}
+            
+            {% for field in profil_form %}
+                {{ field }}
+            {% endfor %}
+            <input type="submit" value="Dodaj" />
+        </form>        
+    </div>
+
+{% endblock %}

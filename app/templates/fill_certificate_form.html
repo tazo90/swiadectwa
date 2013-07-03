@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+        <p>Wypełnianie pół świadectwa</p>
+
+        <div class="fill-certificate">
+            <form action="" method="post">{% csrf_token %}
+                {% for field in pole_form %}
+                {{ field.label }} {{ field }}
+                {% endfor %}
+                <br /><br />
+                <input type="submit" value="Zapisz" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

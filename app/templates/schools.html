@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="wrapper">
+    
+    {% if request.user.is_superuser %}
+    <a class="btn btn-small" href="{% url school-create %}">Dodaj nową szkołę</a>
+    {% endif %}
+
+    {% if szkoly %}
+        <table cellpadding="0" cellspacing="0" border="0" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Wojewodztwo</th>
+                <th>Miejscowość</th>
+                <th>Nazwa</th>            
+                <th>Nr</th>   
+                <th>Klasy</th>
+                {% if request.user.is_superuser %}
+                <th>Edytuj</th>
+                <th>Usun</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>                
+            {% for szkola in szkoly %}
+            <tr class="odd gradeX">
+                <td>{{ szkola.wojewodztwo }}</td>
+                <td>{{ szkola.miejscowosc }}</td>
+                <td>{{ szkola.nazwa }}</td>                                
+                <td>{{ szkola.nr }}</td> 
+                <td><a class="btn btn-small" href="{% url class-list szkola.id %}">Klasy</a></th>                               
+                {% if request.user.is_superuser %}
+                <td class="center"><a class="btn btn-small" href="{% url school-edit pk=szkola.id %}">Edytuj</a></td>                
+                <td class="center"><a class="btn btn-small" href="{% url school-delete pk=szkola.id %}">Usun</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a class="btn btn-small" href="{% url school-list %}?page={{ page_obj.previous_page_number }}">Wstecz</a>
+                {% endif %}
+                <span class="page-current">
+                    Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a class="btn btn-small" href="{% url school-list %}?page={{ page_obj.next_page_number }}">Dalej</a>
+                {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+    <p class="empty">Brak szkół</p>
+    {% endif %}
+
+    </div>
+{% endblock %}
