@@ -1,0 +1,21 @@
+{% block content %}
+
+<p style="font-size:60px;margin:0;padding:0;text-align:center;">{% if page_nr %}Strona {{ page_nr }}{% else %}{{ swiad.nazwa }}{% endif %}</p>
+<img src="{{ MEDIA_URL }}{{ swiad.obrazek }}">
+
+<form action="" method="post">{% csrf_token %}
+    {% for s in stale %}   
+        <input type="text" name="{{s.nazwa}}" style="position:absolute; left:{{s.wsp_x}}px; top:{{s.wsp_y}}px; width:{{s.szerokosc}}px; height:{{s.wysokosc}}px; font-size:35px; text-align: center;" value="{{s.value}}" readonly>
+    {% endfor %}
+    {% for w in wartosc %}   
+        <input type="text" name="{{w.1.nazwa}}" style="position:absolute; left:{{w.1.wsp_x}}px; top:{{w.1.wsp_y}}px; width:{{w.1.szerokosc}}px; height:{{w.1.wysokosc}}px; font-size:35px; text-align: center;" value="{{w.0.wartosc}}">
+    {% endfor %}
+    {% for p in pole %}   
+        <input type="text" name="{{p.nazwa}}" style="position:absolute; left:{{p.wsp_x}}px; top:{{p.wsp_y}}px; width:{{p.szerokosc}}px; height:{{p.wysokosc}}px; font-size:35px; text-align: center;">
+    {% endfor %}
+
+    {% if request.user.profil.rola == 'n' %}
+    <input type="submit" align="center" style="position:relative; width:50%; height:80px; font-size:40px; left: 25%; top: 30px; margin-bottom: 100px;" value="Zapisz świadectwo" >
+    {% endif %}
+</form>
+{% endblock %}

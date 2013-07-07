@@ -477,7 +477,7 @@ def generic_certificate(request, user=None):
         user = User.objects.get(username=uczen.id_user)            
     elif request.user.profil.rola == 'n':
         user = User.objects.get(id=int(request.GET['id_uczen']))
-        uczen = Uczen.objects.get(id=_user.uczen.id)
+        uczen = Uczen.objects.get(id=user.uczen.id)
         szkola = Szkola.objects.get(id=int(request.GET['id_szkola']))                
 
 

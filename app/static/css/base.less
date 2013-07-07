@@ -1,0 +1,312 @@
+@main-width: 1024px;
+@content-color: #d2f870;
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #aef100;
+}
+
+.wrapper {
+    width: @main-width;    
+    margin: 0 auto;     
+    background-color: @content-color;    
+
+    p {
+        font-size: 16px;
+        font-weight: bold;
+        padding-top: 5px;
+        text-align: center;       
+
+        &.empty {
+            font-size: 14px;
+        } 
+    }
+}
+
+table {
+    font-size: 13px;
+}
+
+input[type='submit'] {
+    width: 120px; 
+    border: 1px solid;   
+    border-radius: 10px; 
+    background-color: white;   
+}
+
+input[type="text"], input[type="password"] {
+    height: 30px;
+}
+
+input[type="submit"] {
+    display: block;
+    margin: 0 auto;
+}    
+
+a {    
+    &:hover {
+        text-decoration: none;        
+    }
+}
+
+.delete-user {
+    h3 {
+        text-align: center;
+    }
+
+    input[type="submit"] {
+        float: left;
+    }
+
+    a {
+        float:right;
+    }
+}
+
+header {  
+    div.wrapper {                      
+        margin-top: 10px;                         
+    
+        div.login {
+            width: 200px;                    
+            margin: 100px auto 0 auto;  
+            padding-bottom: 10px;                 
+
+            h2 {
+                font-size: 16px;   
+                font-weight: bold;
+                color: #719d00;
+                text-align: center;            
+            }                            
+        } 
+
+    }
+}
+
+div.user-info-bar {
+    margin-top: 10px;
+
+    .user-info {
+        color: #615345;
+        font-size: 14px;
+        padding-left: 30px;
+    }
+
+    .user {
+        font-weight: bold;
+    }
+
+    .role {
+        color: bc8b5b;
+        font-style: italic;
+    }
+}
+
+div.content {
+    margin-top: 10px; 
+    
+    div.wrapper {              
+        height: 530px;
+
+        form {                    
+            width: 200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .class-list {
+           float: left;
+           width:300px;
+           height:440px;
+           margin:15px 10px;
+           background-color:#ffffff;
+           border:1px solid black;
+           opacity:0.6;
+           filter:alpha(opacity=60);              
+
+           table {
+            margin: 0;
+           }       
+        }
+
+        .student-list {
+           float: right;
+           width:670px;
+           height:440px;
+           margin:15px 10px;
+           background-color:#ffffff;
+           border:1px solid black;
+           opacity:0.6;
+           filter:alpha(opacity=60);              
+
+           table {
+            margin: 0;
+           }       
+        }
+
+        .fill-certificate { 
+        }
+
+        .certificate-list {
+          margin: 10px;          
+          float: left;
+          width: 180px;
+
+          a {
+            display: block;
+          }
+
+          select {
+            width: 180px;
+          }
+        }
+
+        #cert-content { 
+          float: right;                           
+          width: 820px;                                
+        }
+
+        .certificate-frame {           
+          margin: 20px;          
+          width: 960px; 
+          height: 800px; 
+
+          zoom: 0.70;
+          -moz-transform: scale(0.70);
+          -moz-transform-origin: 0 0;
+          -o-transform: scale(0.70);
+          -o-transform-origin: 0 0;
+          -webkit-transform: scale(0.70);
+          -webkit-transform-origin: 0 0;                
+        }       
+
+        .admin-tip {
+          float: left;
+          padding: 40px;
+        }
+
+        .select-user {
+          form {
+            display: inline;
+            margin-left: 100px;
+
+            input[type="submit"] {
+              display: inline;
+              margin-top: -10px;    
+              margin-left: 10px;                      
+            }           
+          }
+        }
+
+        #id_nazwa {
+          width: 180px;
+        }
+
+        #id_wsp_x {
+          width: 180px;
+        }
+
+        #id_wsp_y {
+          width: 180px;
+        }
+
+        #id_wysokosc {
+          width: 180px;
+        }
+
+        #id_szerokosc {
+          width: 180px;
+        }
+
+        #id_stale {
+          width: 180px;
+        }
+    }    
+}
+
+.btn-me {
+    margin-left: 10px;
+}
+
+footer {
+    div.wrapper {
+        margin-top: 10px;
+    }
+
+    small {  
+        display:block;
+        text-align: center;               
+    }
+}
+
+
+.navbar .divider-vertical {
+  height: 40px;  
+  margin: 0 9px;
+  border-left: 1px solid #4575d4;
+  border-right: 1px solid #6b8fd4;
+}
+
+#gradient {
+  .horizontal (@startColor: #555, @endColor: #333) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, right top, from(@startColor), to(@endColor)); // Konqueror
+    background-image: -moz-linear-gradient(left, @startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(left, @startColor, @endColor); // IE10
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, @startColor), color-stop(100%, @endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(left, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(left, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(left, @startColor, @endColor); // Le standard
+  }
+  .vertical (@startColor: #555, @endColor: #333) {
+    background-color: @endColor;
+    background-repeat: repeat-x;
+    background-image: -khtml-gradient(linear, left top, left bottom, from(@startColor), to(@endColor)); // Konqueror
+    background-image: -moz-linear-gradient(@startColor, @endColor); // FF 3.6+
+    background-image: -ms-linear-gradient(@startColor, @endColor); // IE10
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @startColor), color-stop(100%, @endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(@startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(@startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(@startColor, @endColor); // The standard
+  }
+}
+
+.navbar-wrapper {
+  .container-fluid {    
+    padding:0; 
+  }
+}
+
+.navbar {     
+    height: 0px;   
+    width: @main-width;    
+    margin-bottom: 0px;    
+}
+
+
+.navbar-inverse {
+
+  .navbar-inner {    
+    background-color: blue;  
+    #gradient > .vertical(#3b679e, #7db9e8); 
+    border: none;
+  }
+
+  .brand,
+  .nav > li > a {    
+    text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+    color: #ffff73;
+
+  }
+
+  .brand {
+    color: #ffff73;
+  }
+
+  .navbar-text {
+    color: #fff;
+  }
+
+}

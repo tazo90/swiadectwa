@@ -1,0 +1,11 @@
+{% block content %}
+<img src="{{obrazek}}">
+<form action="" method="post">{% csrf_token %}
+{% for s in stale %}   
+	<input type="text" name="{{s.nazwa}}" style="position:absolute; left:{{s.wsp_x}}px; top:{{s.wsp_y}}px; width:{{s.szerokosc}}px; height:{{s.wysokosc}}px; font-size:35px; text-align: center;" value="{{s.value}}" readonly>
+{% endfor %}
+{% for w in wartosc %}   
+	<input type="text" name="{{w.1.nazwa}}" style="position:absolute; left:{{w.1.wsp_x}}px; top:{{w.1.wsp_y}}px; width:{{w.1.szerokosc}}px; height:{{w.1.wysokosc}}px; font-size:35px; text-align: center;" value="{{w.0.wartosc}}" readonly>
+{% endfor %}
+</form>
+{% endblock %}
