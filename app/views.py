@@ -307,9 +307,7 @@ def class_list(request, id_szkoly=None):
         uczen_w_klasie = UczenWKlasieForm(data=request.POST)
         if uczen_w_klasie.is_valid():            
             uczen_w_klasie.save()
-            return redirect(reverse('class-list', kwargs={'id_szkoly': id_szkoly, }))
-        else:
-            print 'nie'
+            return redirect(reverse('class-list', kwargs={'id_szkoly': id_szkoly, }))        
 
     uczen_klasa_form = UczenWKlasieForm()
     szkola = Szkola.objects.filter(pk=id_szkoly)[0]
@@ -429,8 +427,7 @@ def ajax_show_certificate(request):
             first_page = Swiadectwo.objects.get(id=int(request.POST['swiadectwo_show']))
             pages = Swiadectwo.objects.filter(nazwa=first_page.nazwa)
             #data = serializers.serialize('json', [swiad]) # gdy zwraca tylko jeden obiekt (tzn gdy get to [])
-            data = serializers.serialize('json', pages) 
-            print data          
+            data = serializers.serialize('json', pages)             
             
             return HttpResponse(data, mimetype='application/json')
         elif request.POST.has_key('strona_show'):                # pokaz strone swiadectwa            
