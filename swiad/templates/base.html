@@ -1,9 +1,9 @@
 <!DOCTYPE>
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}bootstrap.css">     
-        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}base.less">           
-        <title>Main page</title>        
+    <head>        
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/less" href="{{ STATIC_URL }}css/base.less">           
+        <title>System Świadectw</title>        
     </head>
 <body>    
     <header>
@@ -20,7 +20,7 @@
                                 {% if user.is_superuser %}                                                                
                                 <li><a href="{% url user-list %}">Użytkownicy</a></li>
                                 <li class="divider-vertical"></li>
-                                <li><a href="#">Uczniowie</a></li>
+                                <li><a href="{% url student-list %}">Uczniowie</a></li>
                                 <li class="divider-vertical"></li>
                                 <li><a href="{% url certificate %}">Świadectwa</a></li>
                                 <li class="divider-vertical"></li>
@@ -68,21 +68,23 @@
 
     <footer>
         <div class="wrapper">
-            <small>Copyright &copy; 2013 <a href="#" title="System formularzy">System Formularzy </a> by <span class="author">Lila, Tazo</span></small>
+            <small>Copyright &copy; 2013 <a href="#" title="System formularzy">System Formularzy </a> by <span class="author">Tazo</span></small>
         </div>
     </footer>
 
     <!-- javascript
-    ===================================================== -->    
-    <script src="{{ STATIC_URL }}less.js"></script>    
-    <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script> 
+    ===================================================== -->        
+    <script src="//raw.github.com/less/less.js/master/dist/less-1.4.1.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>    
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript">        
+    <script type="text/javascript">
+
         $(document).ready(function() {
-            // przy zmianie selectu (wybrania innej szkoly), select od id id_szkola jest wypelniany klasami tej szkoly
-            $('#id_szkola').change(function() {
+            // po wybraniu szkoly ma wyswietlic wszsystkie klasy tej szkoly            
+            $('form #id_szkola').change(function() {
                 var szkola_id = $("#id_szkola :selected").val();                
+                
                 $.ajax({
                     type: "POST",
                     url: '/school/class/',      // url mapowany na widok ajax_school_class
@@ -101,9 +103,9 @@
                     error: function(xhr, textStatus, errorThrown) {
                         alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
                     }
-                });
+                });  
             });
-            
+
             // przy klikniecu na przycisk uczeniowie pokazuje sie lista uczniow danej klasy ze szkoly
             $('a#uczniowie').click(function() {                
                 var szkola_id = window.location.pathname.split('/')[2];
@@ -127,58 +129,197 @@
                                           +data[i].fields.first_name+'</td><td>'
                                           +data[i].fields.last_name+'</td></tr>')                            
                         });
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
                     }
                 });           
             });
         
-            // przy kliknieciu pokazuje sie swiadectwo
-            $('a#show-cert').click(function() {
-                var sel = $('#id_swiadectwa').find(':selected').text();
-                
+            // (admin) po kliknieciu pokazuje sie swiadectwo 
+            $('.admin-page a#show-cert').click(function() {
+                var id_swiad = $('#id_swiadectwa').find(':selected').val();                
+                                
                 $.ajax({
                     type: 'POST',
                     url: '{% url show-cert %}',
                     dataType: 'json',
                     data: {
-                        swiadectwo_show: sel,
+                        swiadectwo_show: id_swiad,
                     },
-                    success: function(data) { 
-                        $('#wrapper').css({'height': '1240px'});                        
-                        $("#cert-content").html(
+                    success: function(data) {                         
+                        // wyswietla swiadectwo w #cert-content
+                        $('#wrapper').css({'height': '1270px'});                        
+                        $("#cert-frame").attr("src", "../generic_certificate/?id_swiad=" + id_swiad);
+                        /*$("#cert-content").html(
                             '<p>' + data[0].fields.nazwa + '</p>'
                             +'<img src="{{ MEDIA_URL }}/' + data[0].fields.obrazek + '" />'
-                        );
-                    },
-                    /*error: function(xhr, textStatus, errorThrown) {
-                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
-                    }*/
+                        );*/
+
+                        // wyswietla strony wybranego swiadectwa w #id_swiad_pages
+                        $('#id_strony').find('option').remove().end();
+
+                        $.each(data, function(i, item) {
+                            $('#id_strony').append($('<option></option>').val(data[i].pk).html(i+1));
+                        });                        
+                    }
                 });
             });
 
-            // przy klikniecu usuwa swiadectwo i odswieza liste swiadectw
+            // (nauczyciel) nauczyciel po kliknieciu pokaz swiadectwo, przekazuje do widoku wybrane dane
+            $('.teacher-page a#show-cert').click(function() {
+                var id_swiad = $('#id_swiadectwa').find(':selected').val();
+                var id_szkola = $("#id_szkola").val();
+                var id_klasa = $("#id_klasa").val();
+                var id_uczen = $("#id_id_user").val();
+
+                if ($("#id_szkola option:selected").val() == "")  { alert("Wybierz szkołę"); return false; }
+                if ($("#id_klasa option:selected").val() == "")  { alert("Wybierz klasę"); return false; }
+                if ($("#id_id_user option:selected").val() == "")  { alert("Wybierz ucznia"); return false; }
+                                
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url show-cert %}',
+                    dataType: 'json',
+                    data: {
+                        swiadectwo_show: id_swiad,
+                    },
+                    success: function(data) {                         
+                        // wyswietla swiadectwo w #cert-content
+                        $('#wrapper').css({'height': '1270px'});                        
+                        $("#cert-frame").attr("src", "../generic_certificate/?id_swiad=" + id_swiad + "&id_szkola=" + id_szkola + "&id_klasa=" + id_klasa + "&id_uczen=" + id_uczen);                        
+
+                        // wyswietla strony wybranego swiadectwa w #id_swiad_pages
+                        $('#id_strony').find('option').remove().end();
+
+                        $.each(data, function(i, item) {
+                            $('#id_strony').append($('<option></option>').val(data[i].pk).html(i+1));
+                        });                        
+                    }
+                });
+            });
+                    
+
+            // po kliknieciu na strone pokazuje odpowiednia strone
+            $('a#show-cert-page').click(function() {
+                var id_swiad = $('#id_strony').find(':selected').val();
+                var page_nr = $('#id_strony').find(':selected').text();
+                var id_szkola = $("#id_szkola").val();
+                var id_klasa = $("#id_klasa").val();
+                var id_uczen = $("#id_id_user").val();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url show-cert %}',
+                    dataType: 'json',
+                    data: {
+                        strona_show: id_swiad,
+                    },
+                    success: function(data) {                        
+                        $('#wrapper').css({'height': '1270px'});                        
+                        $("#cert-frame").attr("src", "../generic_certificate/?id_swiad=" + id_swiad + "&page_nr=" + page_nr + "&id_szkola=" + id_szkola + "&id_klasa=" + id_klasa + "&id_uczen=" + id_uczen);
+                        /*$("#cert-content").html(
+                            '<p>Strona ' + page_nr + '</p>'
+                            +'<img src="{{ MEDIA_URL }}/' + data[0].fields.obrazek + '" />'
+                        );*/
+                    }
+                });
+            });
+
+            // po klikniecu usuwa swiadectwo i odswieza liste swiadectw
             $('a#delete-cert').click(function() {
-                var sel = $('#id_swiadectwa').find(':selected').text();
+                var selected = $('#id_swiadectwa').find(':selected').val();
 
                  $.ajax({
                     type: 'POST',
                     url: '{% url show-cert %}',
                     dataType: 'json',
                     data: {
-                        swiadectwo_del: sel,
+                        swiadectwo_del: selected,
                     },
-                    success: function(data) { 
+                    success: function(data) {                                                 
                         $("#id_swiadectwa").find('option').remove().end();          // usuwa liste swiadectw
+                        $("#id_strony").find('option').remove().end();              // czysc tez strony                        
 
                         $.each(data, function(i, item) {                            // aktualizauje nowa liste swiadectw
-                            $("#id_swiadectwa").append($('<option></option>').val(data[i].fields.nazwa).html(data[i].fields.nazwa));
+                            $("#id_swiadectwa").append($('<option></option>').val(data[i].pk).html(data[i].fields.nazwa));
                         });
+                    }
+                });
+            });
+
+            // po klikniecu usuwa strone swiadectwa i odswieza liste swiadectw
+            $('a#delete-cert-page').click(function() {                
+                var selected = $('#id_strony').find(':selected').val();                
+                 
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url show-cert %}',
+                    dataType: 'json',
+                    data: {
+                        strona_del: selected,
                     },
-                    /*error: function(xhr, textStatus, errorThrown) {
+                    success: function(data) {
+                        // czyszczenie select #id_strony i aktualizacja
+                        $("#id_strony").find('option').remove().end();          // usuwa liste swiadectw                        
+
+                        $.each(data, function(i, item) {                            // aktualizauje nowa liste swiadectw
+                            $("#id_strony").append($('<option></option>').val(data[i].pk).html(i+1));
+                        });
+
+                        // TODO: aktualizacja #id_swiadectwa, czyszczenie contentu przy usuwaniu strony i swiadectwa
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
                         alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
-                    }*/
+                    }
+                });
+            });
+
+            // dodawanie pol do formularza po kliknieciu
+            $('a#add-field-cert').click(function() {
+                var id_swiad = $('#id_swiadectwa').find(':selected').val();
+
+                if (!id_swiad) {
+                    alert('Musisz wybrać świadectwo!');
+                    return false;
+                }
+                                
+                var nazwa_pola = $('#id_nazwa').val();
+                var wsp_x = $('#id_wsp_x').val();
+                var wsp_y = $('#id_wsp_y').val();
+                var wysokosc = $('#id_wysokosc').val();
+                var szerokosc = $('#id_szerokosc').val();
+                var stale = $('#id_stale').find(':selected').val();
+
+                if (!nazwa_pola || !wsp_x || !wsp_y || !wysokosc || !szerokosc || !stale)
+                {
+                    alert("Wypełnij poprawnie dane pola!");
+                    return false;
+                }                
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url generic-certificate %}',
+                    dataType: 'json',
+                    data: {                        
+                        id_swiad: id_swiad,
+                        nazwa_pola: nazwa_pola,
+                        wsp_x: wsp_x,
+                        wsp_y: wsp_y,
+                        wysokosc: wysokosc,
+                        szerokosc: szerokosc,
+                        stale: stale,
+                    },
+                    success: function(data) {              
+                        $('#id_nazwa').val('');
+                        $('#id_wsp_x').val('');
+                        $('#id_wsp_y').val('');
+                        $('#id_wysokosc').val('');
+                        $('#id_szerokosc').val('');
+                        $('#id_stale').find('option:selected').removeAttr('selected');
+
+                        $("#cert-frame").attr("src", "../generic_certificate/?id_swiad=" + id_swiad);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        alert("Blad: " + errorThrown + xhr.status + xhr.responseText);
+                    }
                 });
             });
             

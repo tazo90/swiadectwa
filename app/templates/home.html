@@ -1,16 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="wrapper">
+    <div class="wrapper" {% if request.user.profil.rola == 'u' %}style="height:1240px;"{% endif %}>
     {% if request.user.profil.rola == 'u' %}
     <p>Lista twoich świadectw</p>    
+
+    <div class="certificate-list">
+        Lista Twoich świadectw:<br />
+        {% for field in swiad_form %}        
+        {{ field }}
+        {% endfor %}
+
+        <div class="admin-page">
+            <a id="show-cert" class="btn btn-small" href="#">Pokaż świadectwo</a>          
+        </div>
+
+        <br />
+        <div id="cert-pages">
+            {% for field in swiad_pages %}
+            {{ field.label }}:<br />
+            {{ field }}
+            {% endfor %}
+
+            <div class="student-page">
+                <a id="show-cert-page" class="btn btn-small" href="#">Pokaż stronę</a>            
+            </div>
+        </div>
+    </div>
+
+    <div class="cert" id="cert-content">
+        <div style="position:absolute; width:inherit; height:860px; transform: scale(0.33); transform-origin: 0 0; -webkit-transform: scale(0.33); -webkit-transform-origin: 0 0;">
+            <iframe id="cert-frame" src="" frameborder="0" width="304%" height="450%"></iframe>
+        </div>
+    </div>
+
     {% elif request.user.profil.rola == 'n' %}
-    <p>Nauczycielu, wybierz odpowiednie opcje, by wypełnić świadectwo</p>
-    
+    <p>Nauczycielu, wybierz odpowiednie opcje, by wypełnić świadectwo</p>    
     {% else %}
     <p>Witaj, adminie!</p>
     <div class="admin-tip">
-        <p>Twój schemat postępowania <span style="color:red;"> - trzymaj się tych regół !</span></p>
+        <p>Twój schemat postępowania <span style="color:red;"> - trzymaj się tych reguł !</span></p>
         <ul>
             <li>1. Utwórz szkołę.</li>
             <li>2. Utwórz klasy w szkole.</li>

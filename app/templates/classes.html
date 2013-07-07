@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="wrapper">
+    <div class="wrapper" style="height:600px;">
         <p>Szkoła: {{ szkola.nazwa }} {{ szkola.nr }} w {{ szkola.miejscowosc }} </p>
 
         {% if request.user.is_superuser %}
@@ -9,6 +9,15 @@
         {% endif %}
 
         <br />
+
+        <div class="select-user">            
+            <form action="" method="post">{% csrf_token %}                
+                {% for field in uczen_klasa_form %}
+                {{ field }}
+                {% endfor %}
+                <input class="btn btn-small" type="submit" value="Zapisz" />                
+            </form>            
+        </div>
 
         <div class="class-list">
             <p>Klasy</p>

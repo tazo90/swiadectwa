@@ -35,10 +35,7 @@ WOJEWODZTWA = (
     (u'Wielkopolskie', u'Wielkopolskie'),
     (u'Zachodnio-Pomorskie', u'Zachodnio-Pomorskie'),
 )
-#do profilu
-#pesel,haslo,rola (tylko przy tworzeniu usera)
-#nauczyciel nic
-#jak jestes uczen to join pesel z tabela uczniowie po pesel
+
 
 class Swiadectwo(models.Model):
     def url(self, filename):
@@ -54,6 +51,7 @@ class Swiadectwo(models.Model):
     def __unicode__(self):
         return self.nazwa
 
+
 class Pole(models.Model):
     id_swiad = models.ForeignKey(Swiadectwo)
     nazwa = models.CharField(max_length=50)    
@@ -63,12 +61,12 @@ class Pole(models.Model):
     szerokosc = models.IntegerField()  
     stale = models.CharField(max_length=1, choices=STALE_POLE)
 
-    class Meta:
-        unique_together = ('id_swiad', 'nazwa')
+    class Meta:        
         verbose_name_plural = 'Pola'
 
     def __unicode__(self):
         return self.nazwa
+
 
 class Profil(models.Model):
     user = models.OneToOneField(User)                    
@@ -80,16 +78,19 @@ class Profil(models.Model):
     def __unicode__(self):
         return "%s" % (self.user)
 
+
 User.profil = property(lambda u: Profil.objects.get_or_create(user=u)[0])
+
 
 class Uczen(models.Model):
     id_user = models.OneToOneField(User)
-    dataUr = models.DateField()
-    miejsceUr = models.CharField(max_length=100)
+    data_ur = models.DateField()
+    miejsce_ur = models.CharField(max_length=100)
     plec = models.CharField(max_length=10, null=True, choices=PLEC, default='m')
 
     def __unicode__(self):
         return "%s" % (self.id_user)
+
 
 class Wartosci(models.Model):
     #id_swiad = models.ForeignKey(Pola, to_field='id_swiad')
@@ -103,7 +104,8 @@ class Wartosci(models.Model):
         verbose_name_plural = 'Wartosci'
 
     def __unicode__(self):
-        return "%s %s %s" % (self.id_user.nazwisko, self.id_pole.nazwa, self.wartosc)
+        return "%s %s" % (self.id_pole.nazwa, self.wartosc)
+
 
 class Szkola(models.Model):
     nazwa = models.CharField(max_length=100, null=True)
@@ -116,7 +118,8 @@ class Szkola(models.Model):
         unique_together = ('miejscowosc','nazwa')
 
     def __unicode__(self):
-        return self.nazwa
+        return unicode(self.nazwa)
+
 
 class Klasa(models.Model):
     id_szkola = models.ForeignKey(Szkola, related_name='klasy')
@@ -129,8 +132,9 @@ class Klasa(models.Model):
     def __unicode__(self):
         return "%s %s" % (self.id_szkola.nazwa, self.klasa)
 
+
 class Uczen_w_klasie(models.Model):
-    id_user = models.ForeignKey(User)
+    id_user = models.ForeignKey(Uczen, to_field='id_user')
     szkola = models.ForeignKey(Szkola)
     klasa = models.ForeignKey(Klasa)
 
@@ -142,5 +146,5 @@ class Uczen_w_klasie(models.Model):
         super(Uczen_w_klasie, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.id_user.last_name
+        return unicode(self.szkola.nazwa)
 

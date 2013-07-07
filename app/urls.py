@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from .views import UserListView, UserDeleteView, SchoolListView, SchoolDeleteView
+from .views import UserListView, UserDeleteView, SchoolListView, SchoolDeleteView, UczenListView
 
 urlpatterns = patterns('app.views',
     url(r'^$', 'index', name='index'),  
@@ -21,8 +21,7 @@ urlpatterns = patterns('app.views',
     url(r'^school/(?P<id_szkoly>\d+)/classes/(?P<nazwa_klasy>\w+)/delete/$', 'class_delete', name='class-delete'),
 
     url(r'^forms/$', 'certificate', name='certificate'),
-    url(r'^forms/create/$', 'create_certificate', name='create-certificate'),
-    url(r'^forms/create/fill/$', 'fill_certificate_form', name='fill-certificate'),
+    url(r'^forms/create/$', 'create_certificate', name='create-certificate'),    
     url(r'^forms/show/$', 'ajax_show_certificate', name='show-cert'),
 
     
@@ -31,10 +30,9 @@ urlpatterns = patterns('app.views',
     url(r'^users/(?P<pk>\d+)/delete/$', UserDeleteView.as_view(), name='user-delete'),    
     url(r'^users/(?P<pesel>\w+)/edit/$', 'user_edit', name='user-edit'),  
 
-
-    #lila 
-    url(r'^certificate_edit/$', 'certificate_edit', name='certificate_edit'),
-    url(r'^proba/$', 'proba', name='proba'),
-
-
+    url(r'^students/$', UczenListView.as_view(), name='student-list'),
+    
+    url(r'^certificate_edit/$', 'certificate_edit', name='certificate-edit'),
+    url(r'^generic_certificate/$', 'generic_certificate', name='generic-certificate'),
+    url(r'^generic_certificate_read/$', 'generic_certificate', name='generic-certificate-read'),    
 )

@@ -11,7 +11,7 @@
             <th>Pesel</th>
             <th>Imie</th>
             <th>Nazwisko</th>            
-            <th>Rola</th>
+            <th>Rola</th>            
             <th>Edytuj</th>
             <th>Usun</th>
           </tr>
@@ -27,7 +27,7 @@
                 {% elif user.profil.rola == 'n' %} nauczyciel
                 {% else %} admin
                 {% endif %}
-            </td>
+            </td>            
             <td class="center"><a class="btn btn-small" href="{% url user-edit user.username %}">Edytuj</a></td>
             {% if not user.is_superuser %}<td class="center"><a class="btn btn-small" href="{% url user-delete pk=user.id %}">Usun</a></td>{% endif %}
         </tr>

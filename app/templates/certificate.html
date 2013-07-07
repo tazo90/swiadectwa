@@ -1,27 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="wrapper" id="wrapper">
+    {#<div class="wrapper" id="wrapper" style={% if request.user.profil.rola == 'n' %}"height:700px;"{% else %}"height:650px;"{% endif %}>#}
+    <div class="wrapper" id="wrapper" style="height:1000px;">
         {% if request.user.is_superuser %}
         <a class="btn btn-small" href="{% url create-certificate %}">Dodaj nowe świadectwo</a>        
         {% endif %}
 
-        <div class="certificate-list" style="border:1px solid red;">                        
-            {% for field in swiad_sel %}
-            {{field.label }} <br />
-            {{ field }}
-            {% endfor %}  
+        <br />
+        <div class="certificate-list">  
 
-            <a id="show-cert" class="btn btn-small" href="#">Pokaż</a>          
-            {% if request.user.is_superuser %}            
-            <a id="delete-cert" class="btn btn-small" href="#">Usun</a>
-            {% elif request.user.profil.rola == 'n' %}
-            <a id="fill-cert" class="btn btn-small" href="#">Wypełnij</a>                    
+            <div class="teacher-page">
+                {% for field in uczen_klasa_form %}
+                {{ field }}<br />
+                {% endfor %}       
+            </div>                 
+            
+            {% for field in swiad_sel %}
+            {{ field.label }}:<br />
+            {{ field }}
+            {% endfor %}
+            
+            {% if request.user.profil.rola == 'n' %}
+            <div class="teacher-page">
+            {% elif request.user.is_superuser %}
+            <div class="admin-page">
             {% endif %}
-        </div>
+                <a id="show-cert" class="btn btn-small" href="#">Pokaż świadectwo</a>                              
+            </div>
+
+            {% if request.user.is_superuser %}            
+            <a id="delete-cert" class="btn btn-small" href="#">Usun świadectwo</a>                            
+            {% endif %}  
+
+            {% if request.user.is_superuser %}
+            <br />
+            Dodaj pole:
+            <br />
+            {% for field in pole_form %}
+            {{ field }}<br />
+            {% endfor %}      
+            <a id="add-field-cert" class="btn btn-small" href="#">Dodaj pole</a>
+            {% endif %}
+            <br />                              
+            
+            <div id="cert-pages">
+                {% for field in swiad_pages %}
+                {{ field.label }}:<br />
+                {{ field }}
+                {% endfor %}
+
+                <a id="show-cert-page" class="btn btn-small" href="#">Pokaż stronę</a>
+                {% if request.user.is_superuser %}            
+                <a id="delete-cert-page" class="btn btn-small" href="#">Usun stronę</a>
+                {% endif %}
+            </div>
+        </div>        
                 
-        <div class="cert" id="cert-content" style="border:1px solid red;">
-        </div>
+        <div class="cert" id="cert-content">
+            <div style="position:absolute; width:inherit; height:860px; transform: scale(0.33); transform-origin: 0 0; -webkit-transform: scale(0.33); -webkit-transform-origin: 0 0;">
+                <iframe id="cert-frame" src="" frameborder="0" width="304%" height="450%"></iframe>
+            </div>
+        </div>        
         
     </div>
 {% endblock %}
